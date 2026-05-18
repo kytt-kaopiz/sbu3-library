@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBU3 Library — Kaopiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #29ABE2;
+  --primary-dark: #1A8BBF;
+  --primary-light: #E8F6FC;
+  --primary-mid: #B3E0F5;
+  --red: #E83B2A;
+  --red-light: #FDECEA;
+  --green: #16A34A;
+  --green-light: #DCFCE7;
+  --amber: #D97706;
+  --amber-light: #FEF3C7;
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+  --white: #FFFFFF;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--gray-800); line-height: 1.6; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+img { max-width: 100%; }
+
+/* UTILS */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.text-sm { font-size: 13px; }
+.text-xs { font-size: 11px; }
+.font-bold { font-weight: 700; }
+.text-muted { color: var(--gray-400); }
+.text-primary { color: var(--primary); }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; border: none; transition: all 0.15s; white-space: nowrap; }
+.btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+.btn-subtle { background: var(--gray-100); color: var(--gray-700); }
+.btn-white { background: #fff; color: var(--gray-800); box-shadow: var(--shadow); }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+.btn-lg { padding: 13px 32px; font-size: 16px; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+.badge-blue { background: var(--primary-light); color: var(--primary-dark); }
+.badge-red { background: var(--red-light); color: var(--red); }
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+.badge-gray { background: var(--gray-100); color: var(--gray-500); }
+
+/* CARD */
+.card { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--gray-200); }
+
+/* INPUTS */
+.input-group { margin-bottom: 16px; }
+.input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
+.input-field { width: 100%; padding: 10px 14px; font-size: 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); outline: none; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; color: var(--gray-800); }
+.input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(41,171,226,0.15); }
+
+/* NAV */
+#navbar { background: #fff; border-bottom: 1px solid var(--gray-200); position: sticky; top: 0; z-index: 200; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.nav-logo-text { font-size: 18px; font-weight: 800; color: var(--gray-900); line-height: 1; }
+.nav-logo-text span { color: var(--primary); }
+.nav-logo-sub { font-size: 10px; color: var(--gray-400); letter-spacing: 0.08em; margin-top: 1px; }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { padding: 7px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--gray-600); cursor: pointer; transition: all 0.15s; border: none; background: none; }
+.nav-link:hover, .nav-link.active { background: var(--primary-light); color: var(--primary); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-user { font-size: 14px; font-weight: 500; color: var(--gray-700); display: flex; align-items: center; gap: 6px; }
+.nav-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+/* HERO */
+.hero { background: linear-gradient(135deg, #0F172A 0%, #1A3A5C 50%, #0F2D4A 100%); padding: 80px 24px 100px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(41,171,226,0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 20%, rgba(41,171,226,0.1) 0%, transparent 50%); }
+.hero-content { position: relative; max-width: 680px; margin: 0 auto; }
+.hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(41,171,226,0.15); color: var(--primary); border: 1px solid rgba(41,171,226,0.3); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 24px; }
+.hero-title { font-size: 52px; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 16px; }
+.hero-title span { color: var(--primary); }
+.hero-sub { font-size: 18px; color: rgba(255,255,255,0.65); margin-bottom: 36px; line-height: 1.6; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.hero-stats { display: flex; gap: 40px; justify-content: center; margin-top: 52px; padding-top: 36px; border-top: 1px solid rgba(255,255,255,0.1); }
+.hero-stat-num { font-size: 28px; font-weight: 800; color: #fff; line-height: 1; }
+.hero-stat-label { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 4px; }
+
+/* SECTIONS */
+.section { max-width: 1200px; margin: 0 auto; padding: 56px 24px; }
+.section-title { font-size: 28px; font-weight: 800; color: var(--gray-900); margin-bottom: 6px; }
+.section-sub { font-size: 15px; color: var(--gray-400); margin-bottom: 32px; }
+
+/* BOOK GRID */
+.book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.book-card { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); overflow: hidden; cursor: pointer; transition: all 0.2s; }
+.book-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(41,171,226,0.15); border-color: var(--primary-mid); }
+.book-cover { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 58px; position: relative; }
+.book-cover-borrowed { background: #FFF5F5; }
+.book-cover-available { background: var(--primary-light); }
+.book-cover-online { background: linear-gradient(135deg, #EFF6FF, #E0F2FE); }
+.book-status-tag { position: absolute; top: 8px; right: 8px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 8px; }
+.book-info { padding: 14px 16px; }
+.book-title { font-size: 14px; font-weight: 700; color: var(--gray-900); line-height: 1.3; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.book-author { font-size: 12px; color: var(--gray-400); margin-bottom: 10px; }
+.book-meta { display: flex; justify-content: space-between; align-items: center; }
+.book-rating { font-size: 12px; font-weight: 600; color: var(--amber); }
+
+/* FILTER BAR */
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 24px; }
+.filter-search { flex: 1; min-width: 220px; position: relative; }
+.filter-search input { width: 100%; padding: 10px 14px 10px 40px; border: 1.5px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; outline: none; transition: all 0.15s; }
+.filter-search input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(41,171,226,0.12); }
+.filter-search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 16px; }
+.genre-pill { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid var(--gray-200); background: #fff; color: var(--gray-600); transition: all 0.15s; }
+.genre-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.genre-pill:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+/* MODAL */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(2px); }
+.modal-box { background: #fff; border-radius: 20px; padding: 0; max-width: 540px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 80px rgba(0,0,0,0.3); }
+.modal-header { padding: 24px 28px 0; display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.modal-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--gray-100); color: var(--gray-500); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: var(--gray-200); }
+.modal-body { padding: 20px 28px 28px; }
+
+/* TOAST */
+#toast { position: fixed; top: 76px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast-item { background: var(--gray-900); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow-lg); animation: toastIn 0.3s ease; max-width: 320px; }
+.toast-item.success { background: #14532D; border-left: 4px solid var(--green); }
+.toast-item.error { background: #7F1D1D; border-left: 4px solid var(--red); }
+.toast-item.info { background: #1E3A5F; border-left: 4px solid var(--primary); }
+
+/* TABS */
+.tabs { display: flex; gap: 2px; border-bottom: 2px solid var(--gray-200); margin-bottom: 24px; }
+.tab-btn { padding: 10px 18px; border: none; background: none; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--gray-400); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; white-space: nowrap; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-btn:hover:not(.active) { color: var(--gray-600); }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+.data-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid var(--gray-200); }
+.data-table tbody tr:hover { background: var(--gray-50); }
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+/* DASHBOARD GRID */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.stat-card { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); padding: 20px 24px; border-top: 3px solid var(--primary); }
+.stat-card.red { border-top-color: var(--red); }
+.stat-card.green { border-top-color: var(--green); }
+.stat-card.amber { border-top-color: var(--amber); }
+.stat-num { font-size: 32px; font-weight: 800; color: var(--gray-900); line-height: 1; }
+.stat-label { font-size: 13px; color: var(--gray-400); margin-top: 5px; }
+
+/* READER */
+#reader-view { position: fixed; inset: 0; background: #FAFAF8; z-index: 1000; display: flex; flex-direction: column; }
+.reader-nav { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.reader-nav-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+.reader-controls { display: flex; align-items: center; gap: 8px; }
+.reader-ctrl-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--gray-600); transition: all 0.15s; }
+.reader-ctrl-btn:hover { background: var(--gray-100); border-color: var(--gray-300); }
+.reader-body { flex: 1; overflow-y: auto; }
+.reader-content { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+.reader-book-title { font-family: 'Lora', serif; font-size: 28px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; text-align: center; }
+.reader-chapter { font-size: 14px; color: var(--gray-400); text-align: center; margin-bottom: 40px; }
+.reader-text { font-family: 'Lora', serif; font-size: 18px; line-height: 1.9; color: var(--gray-700); }
+.reader-text p { margin-bottom: 1.4em; }
+.reader-text .chapter-heading { font-size: 22px; font-weight: 600; color: var(--gray-900); margin: 2em 0 1em; }
+.reader-footer { background: #fff; border-top: 1px solid var(--gray-200); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.reader-progress { flex: 1; height: 4px; background: var(--gray-200); border-radius: 2px; margin: 0 16px; }
+.reader-progress-fill { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.3s; }
+.reader-page-info { font-size: 13px; color: var(--gray-400); }
+.reader-dark { background: #1A1A2E; }
+.reader-dark .reader-nav, .reader-dark .reader-footer { background: #16213E; border-color: #2A2A4A; }
+.reader-dark .reader-book-title, .reader-dark .reader-chapter { color: #E2E8F0; }
+.reader-dark .reader-text { color: #CBD5E1; }
+.reader-dark .reader-text .chapter-heading { color: #F1F5F9; }
+.reader-dark .reader-ctrl-btn { background: #16213E; border-color: #2A2A4A; color: #94A3B8; }
+.reader-dark .reader-ctrl-btn:hover { background: #1E2A4A; }
+.reader-dark .reader-nav-title { color: #E2E8F0; }
+
+/* AUTH PAGE */
+.auth-wrap { min-height: 100vh; background: linear-gradient(135deg, var(--primary-light) 0%, #fff 60%, var(--primary-light) 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.auth-card { background: #fff; border-radius: 20px; padding: 36px; max-width: 440px; width: 100%; box-shadow: 0 8px 40px rgba(41,171,226,0.12), 0 2px 8px rgba(0,0,0,0.06); }
+.auth-logo { text-align: center; margin-bottom: 28px; }
+.auth-logo-icon { width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px; }
+.auth-logo-name { font-size: 22px; font-weight: 800; color: var(--gray-900); }
+.auth-logo-sub { font-size: 11px; color: var(--gray-400); letter-spacing: 0.1em; }
+.auth-tabs { display: flex; background: var(--gray-100); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+.auth-tab { flex: 1; padding: 9px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: none; color: var(--gray-400); }
+.auth-tab.active { background: #fff; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.demo-box { background: var(--primary-light); border-radius: 8px; padding: 12px 14px; font-size: 12px; color: var(--primary-dark); margin-top: 12px; }
+.demo-box strong { display: block; margin-bottom: 4px; }
+
+/* OVERDUE ALERT */
+.overdue-alert { background: var(--red-light); border: 1px solid rgba(232,59,42,0.2); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--red); font-weight: 500; }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 56px 20px; }
+.empty-icon { font-size: 52px; margin-bottom: 12px; }
+.empty-msg { font-size: 16px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; }
+.empty-sub { font-size: 14px; color: var(--gray-400); }
+
+/* BOOK DETAIL MODAL */
+.book-detail-cover { font-size: 80px; text-align: center; padding: 28px; background: var(--primary-light); border-radius: 12px; margin-bottom: 20px; }
+.book-detail-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.book-detail-stat { background: var(--gray-50); border-radius: 8px; padding: 12px; text-align: center; }
+.book-detail-stat-val { font-size: 16px; font-weight: 700; color: var(--gray-800); }
+.book-detail-stat-label { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+.book-detail-desc { font-size: 15px; color: var(--gray-600); line-height: 1.7; border-left: 3px solid var(--primary); padding-left: 14px; margin-bottom: 20px; }
+.book-detail-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* LANDING FEATURES */
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.feature-card { background: #fff; border-radius: var(--radius-lg); border: 1px solid var(--gray-200); padding: 28px; }
+.feature-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 16px; }
+.feature-title { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.feature-desc { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+
+/* FOOTER */
+footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 13px; }
+footer strong { color: var(--primary); }
+
+/* FORM GRID */
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+
+/* ANIMATIONS */
+@keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.fade-up { animation: fadeUp 0.35s ease; }
+.fade-in { animation: fadeIn 0.25s ease; }
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .hero-title { font-size: 32px; }
+  .hero-stats { gap: 20px; }
+  .nav-links { display: none; }
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .book-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div id="toast"></div>
+
+<!-- READER VIEW (hidden by default) -->
+<div id="reader-view" class="hidden">
+  <div class="reader-nav">
+    <button class="btn btn-subtle btn-sm" onclick="closeReader()">← Quay lại</button>
+    <span class="reader-nav-title" id="reader-nav-title"></span>
+    <div class="reader-controls">
+      <button class="reader-ctrl-btn" onclick="changeFontSize(-1)" title="Nhỏ hơn">A-</button>
+      <button class="reader-ctrl-btn" onclick="changeFontSize(1)" title="Lớn hơn">A+</button>
+      <button class="reader-ctrl-btn" onclick="toggleDarkMode()" title="Đổi theme" id="dark-btn">🌙</button>
+    </div>
+  </div>
+  <div class="reader-body" id="reader-body" onscroll="updateReadProgress()">
+    <div class="reader-content" id="reader-content"></div>
+  </div>
+  <div class="reader-footer">
+    <span class="reader-page-info" id="reader-page-left"></span>
+    <div class="reader-progress"><div class="reader-progress-fill" id="reader-progress-fill" style="width:0%"></div></div>
+    <span class="reader-page-info" id="reader-page-right"></span>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+<!-- AUTH PAGE -->
+<div id="auth-page" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-card fade-up">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">📖</div>
+        <div class="auth-logo-name"><span style="color:var(--primary)">SBU</span><sup>3</sup> Library</div>
+        <div class="auth-logo-sub">KAOPIZ · STRATEGIC BUSINESS UNIT 3</div>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')" id="tab-login">Đăng nhập</button>
+        <button class="auth-tab" onclick="switchAuthTab('register')" id="tab-register">Đăng ký</button>
+      </div>
+      <div id="login-form">
+        <div class="input-group"><label>Tên đăng nhập</label><input class="input-field" id="login-user" placeholder="admin hoặc user1" /></div>
+        <div class="input-group"><label>Mật khẩu</label><input class="input-field" type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" /></div>
+        <button class="btn btn-primary btn-lg" style="width:100%" onclick="doLogin()">Đăng nhập →</button>
+        <div class="demo-box"><strong>Tài khoản thử:</strong>Admin: admin / admin123 &nbsp;|&nbsp; User: user1 / 123456</div>
+      </div>
+      <div id="register-form" class="hidden">
+        <div class="form-grid-2">
+          <div class="input-group" style="grid-column:1/-1"><label>Họ và tên</label><input class="input-field" id="reg-name" placeholder="Nguyễn Văn A" /></div>
+          <div class="input-group"><label>Tên đăng nhập</label><input class="input-field" id="reg-user" placeholder="username" /></div>
+          <div class="input-group"><label>Email</label><input class="input-field" type="email" id="reg-email" placeholder="you@kaopiz.com" /></div>
+          <div class="input-group"><label>Mật khẩu</label><input class="input-field" type="password" id="reg-pass" placeholder="••••••••" /></div>
+          <div class="input-group"><label>Xác nhận mật khẩu</label><input class="input-field" type="password" id="reg-confirm" placeholder="••••••••" /></div>
+        </div>
+        <button class="btn btn-primary btn-lg" style="width:100%;margin-top:4px" onclick="doRegister()">Tạo tài khoản →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN SITE -->
+<div id="main-site">
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo" onclick="showPage('home')" style="cursor:pointer">
+        <div class="nav-logo-icon">📖</div>
+        <div>
+          <div class="nav-logo-text"><span>SBU</span><sup style="font-size:11px">3</sup> Library</div>
+          <div class="nav-logo-sub">KAOPIZ</div>
+        </div>
+      </div>
+      <div class="nav-links" id="nav-links">
+        <button class="nav-link active" onclick="showPage('home')" id="nav-home">🏠 Trang chủ</button>
+        <button class="nav-link" onclick="showPage('catalog')" id="nav-catalog">📚 Tủ sách</button>
+        <button class="nav-link" onclick="showPage('dashboard')" id="nav-dashboard">📊 Dashboard</button>
+      </div>
+      <div class="nav-right" id="nav-right">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGES -->
+  <div id="page-home">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">📖 SBU3 · Strategic Business Unit 3 · Kaopiz</div>
+        <h1 class="hero-title">Thư Viện Tri Thức<br><span>SBU3</span></h1>
+        <p class="hero-sub">Nơi lưu giữ và chia sẻ tri thức của đội ngũ Kaopiz.<br>Mượn sách, đọc online, cùng nhau phát triển.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-lg" onclick="showPage('catalog')">📚 Khám phá tủ sách</button>
+          <button class="btn btn-white btn-lg" onclick="requireLoginThen(()=>showPage('dashboard'))">📊 Dashboard của tôi</button>
+        </div>
+        <div class="hero-stats" id="hero-stats"></div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section">
+      <h2 class="section-title">Tính năng nổi bật</h2>
+      <p class="section-sub">Tất cả những gì bạn cần để quản lý và đọc sách</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📥</div>
+          <div class="feature-title">Mượn sách trực tiếp</div>
+          <div class="feature-desc">Đăng ký mượn sách vật lý, nhận sách tại văn phòng. Theo dõi hạn trả và lịch sử mượn dễ dàng.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📖</div>
+          <div class="feature-title">Đọc sách online</div>
+          <div class="feature-desc">Đọc ngay trên trình duyệt với reader mode đẹp mắt. Hỗ trợ chế độ tối, điều chỉnh cỡ chữ.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📬</div>
+          <div class="feature-title">Đặt trước sách</div>
+          <div class="feature-desc">Sách đang có người mượn? Đặt trước và nhận thông báo ngay khi sách được trả lại.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Quản lý thông minh</div>
+          <div class="feature-desc">Admin dashboard đầy đủ: quản lý sách, thành viên, theo dõi sách quá hạn theo thời gian thực.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW BOOKS -->
+    <section style="background:#fff; padding: 48px 0; border-top:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200);">
+      <div class="section" style="padding-top:0; padding-bottom:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+          <div>
+            <h2 class="section-title">Sách nổi bật</h2>
+            <p style="font-size:14px;color:var(--gray-400);margin-top:4px">Những cuốn sách được yêu thích nhất</p>
+          </div>
+          <button class="btn btn-outline" onclick="showPage('catalog')">Xem tất cả →</button>
+        </div>
+        <div class="book-grid" id="home-books"></div>
+      </div>
+    </section>
+
+    <footer>
+      <div style="margin-bottom:8px;font-size:15px;font-weight:700;color:#fff;">📖 <strong>SBU3</strong> Library</div>
+      Xây dựng bởi <strong>Strategic Business Unit 3 · Kaopiz</strong><br>
+      <span style="font-size:12px;margin-top:4px;display:block">Chia sẻ tri thức · Phát triển bền vững</span>
+    </footer>
+  </div>
+
+  <!-- CATALOG PAGE -->
+  <div id="page-catalog" class="hidden">
+    <div class="section fade-up">
+      <h2 class="section-title">📚 Tủ Sách</h2>
+      <p class="section-sub">Tất cả sách trong thư viện SBU3</p>
+      <div class="filter-bar" id="catalog-filters">
+        <div class="filter-search">
+          <span class="filter-search-icon">🔍</span>
+          <input id="catalog-search" placeholder="Tìm tên sách, tác giả..." oninput="renderCatalog()" />
+        </div>
+        <div id="genre-pills"></div>
+        <select class="input-field" style="width:auto;padding:10px 14px" id="sort-select" onchange="renderCatalog()">
+          <option value="title">Tên A-Z</option>
+          <option value="rating">Đánh giá cao</option>
+          <option value="year">Mới nhất</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--gray-600);cursor:pointer;white-space:nowrap">
+          <input type="checkbox" id="avail-filter" onchange="renderCatalog()" style="width:auto"> Còn sẵn
+        </label>
+      </div>
+      <div class="book-grid" id="catalog-grid"></div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="page-dashboard" class="hidden">
+    <div class="section fade-up" id="dashboard-content"></div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-backdrop" class="modal-backdrop hidden" onclick="closeModalIfBackdrop(event)">
+  <div class="modal-box fade-in" id="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title"></span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+const BOOKS_DATA = [
+  { id:1, title:"Đắc Nhân Tâm", author:"Dale Carnegie", genre:"Kỹ năng sống", cover:"🤝", year:1936, rating:4.8, desc:"Nghệ thuật giao tiếp và tạo ảnh hưởng đến người khác — cuốn sách kinh điển về kỹ năng mềm.", hasOnline: true, chapters:[
+    { title:"Chương 1: Kỹ thuật cơ bản trong việc xử lý với người khác", content:`<p class="chapter-heading">Nếu bạn muốn lấy mật, đừng đá tổ ong</p><p>Ngày 7 tháng 5 năm 1931, New York chứng kiến cuộc săn lùng tội phạm gay cấn nhất từ trước đến nay. Sau nhiều tuần truy đuổi, cảnh sát đã bao vây tên tội phạm hăng hái nhất và nguy hiểm nhất thành phố — "Two Gun" Crowley, người không biết hút thuốc hay không uống rượu — trong căn hộ của người tình trên Đại lộ Tây 90.</p><p>Một trăm rưỡi cảnh sát và thám tử đã bao vây hang ổ của hắn. Họ đục lỗ trên mái nhà; họ cố gắng xông vào qua khói ngạt. Trong nhiều giờ, tiếng súng nổ vang khắp các đường phố thượng lưu Manhattan. Crowley bò sau tấm ghế đệm, bắn trả liên tục vào cảnh sát.</p><p>Khi trận chiến kết thúc, Crowley bị bắt. Phó cảnh sát trưởng E.P. Mulrooney tuyên bố rằng "Two Gun" Crowley là một trong những tên tội phạm nguy hiểm nhất từng được biết đến ở New York. Hắn có thể giết người mà không cần lý do gì.</p><p>Tuy nhiên, Crowley tự đánh giá mình như thế nào? Chúng ta biết được điều đó nhờ một bức thư hắn viết khi ngồi sau ghế đệm trong khi đạn bay tứ phía. Hắn viết: "Dưới lớp áo khoác này là một trái tim mệt mỏi, nhưng đó là trái tim tốt bụng — trái tim sẽ không làm hại ai."</p><p>Ngay trước đó không lâu, Crowley đang hẹn hò với người yêu ngoài đường. Một cảnh sát tiến đến và yêu cầu xem giấy tờ xe. Không nói một lời, Crowley rút súng bắn viên cảnh sát đó đầy người đạn. Khi người cảnh sát đang hấp hối, Crowley nhảy ra khỏi xe, giật khẩu súng của viên cảnh sát và bắn thêm một phát vào cơ thể đang nằm xuống của anh ta.</p><p>Đó là con người "có trái tim không làm hại ai".</p><p>Crowley bị kết án tử hình. Khi anh ta đến ghế điện ở Sing Sing, anh ta có nói: "Đây là những gì tôi nhận được vì tự bảo vệ mình"? Không. Anh ta nói: "Đây là những gì tôi nhận được vì đã bảo vệ bản thân."</p>` },
+    { title:"Chương 2: Bí quyết lớn nhất của nghệ thuật giao tiếp", content:`<p class="chapter-heading">Có một điều quan trọng hơn tất cả</p><p>Chỉ có một cách duy nhất trên thế gian này để khiến bất kỳ ai làm bất kỳ điều gì. Bạn có bao giờ nghĩ về điều đó không? Có, chỉ một cách duy nhất. Và đó là làm cho người khác muốn làm điều đó.</p><p>Hãy nhớ rằng, không có cách nào khác.</p><p>Tất nhiên, bạn có thể bắt một người đưa cho bạn đồng hồ của anh ta bằng cách chỉa súng vào anh ta. Bạn có thể bắt một nhân viên làm việc cho bạn — cho đến khi bạn quay lưng đi — bằng cách đe dọa sa thải. Bạn có thể dùng vũ lực hay đe dọa để khiến một đứa trẻ làm điều bạn muốn. Nhưng những phương pháp thô bạo này có những phản ứng không mong muốn.</p><p>Cách duy nhất để tôi có thể khiến bạn làm bất cứ điều gì là tạo cho bạn muốn làm điều đó. Không có cách nào khác.</p><p>Tất nhiên, bạn có thể muốn làm một điều gì đó vì sợ hậu quả nếu không làm. Bạn có thể muốn làm nếu bị đe dọa. Nhưng những "ham muốn" không vui vẻ này không tạo ra kết quả tốt nhất.</p>` }
+  ]},
+  { id:2, title:"Nhà Giả Kim", author:"Paulo Coelho", genre:"Tiểu thuyết", cover:"✨", year:1988, rating:4.7, desc:"Hành trình theo đuổi giấc mơ của một chàng chăn cừu trẻ người Tây Ban Nha.", hasOnline: true, chapters:[
+    { title:"Phần Một", content:`<p class="chapter-heading">Huyền thoại cá nhân</p><p>Chàng trai đến một vùng đất cũ bỏ hoang, giữa những tháp chuông và đàn cừu đang ngủ say, nhìn những ngôi sao trên bầu trời đêm.</p><p>Chàng đã làm nghề chăn cừu được ba năm rồi, và chàng biết hầu hết các ngôi sao ở đây. Đàn cừu biết hầu hết đồng cỏ của Andalusia, và khi mặt trời lên là lúc họ bắt đầu ra đi để tìm bóng mát.</p><p>"Chúng tôi có thể là những tên ăn trộm," chàng nghĩ. Chàng nhìn vào bầu trời và tự hỏi liệu có ổn không khi bỏ lại đàn cừu trong tay những người xa lạ.</p><p>Những ngôi sao lấp lánh trong đêm tối. Ở Andalusia, mỗi ngôi sao có nghĩa là một điều gì đó khác nhau — một dấu hiệu, một hướng đi, hay một lời nhắc nhở.</p><p>Nhưng đêm nay, Santiago — tên của chàng chăn cừu — lại nghĩ đến những thứ khác. Chàng nhớ đến giấc mơ đã quay lại với chàng hai lần: một cậu bé dẫn chàng đến Kim Tự Tháp Ai Cập, và ở đó có một kho báu chờ đợi chàng.</p>` }
+  ]},
+  { id:3, title:"Tư Duy Nhanh và Chậm", author:"Daniel Kahneman", genre:"Tâm lý học", cover:"🧠", year:2011, rating:4.6, desc:"Khám phá hai hệ thống tư duy điều khiển cách chúng ta ra quyết định.", hasOnline: true, chapters:[
+    { title:"Chương 1: Các nhân vật của câu chuyện", content:`<p class="chapter-heading">Hệ thống 1 và Hệ thống 2</p><p>Để hiểu sâu về phán xét và lựa chọn, chúng ta cần đề cập đến một số khái niệm quan trọng. Cuốn sách này bàn về những heuristics (phương pháp đánh giá nhanh) và bias (sự thiên kiến) — nhưng trọng tâm của nó là tư duy, đó là tư duy chậm rãi và cẩn thận, đối lập với những đánh giá và lựa chọn tự động và nhanh chóng mà Seymour Epstein đã gọi là "hệ thống trực giác".</p><p>Tôi mô tả các hoạt động tâm thần trong suốt cuốn sách này theo hai tác nhân giả tưởng, Hệ thống 1 và Hệ thống 2, theo thuật ngữ của các nhà tâm lý học.</p><p><strong>Hệ thống 1</strong> hoạt động tự động và nhanh chóng, ít hoặc không cần nỗ lực và không có cảm giác kiểm soát tự nguyện.</p><p><strong>Hệ thống 2</strong> phân bổ sự chú ý đến các hoạt động tâm thần nặng nề đòi hỏi nỗ lực, bao gồm các tính toán phức tạp. Các hoạt động của Hệ thống 2 thường liên quan đến sự trải nghiệm chủ quan về nhân cách, lựa chọn và tập trung.</p>` }
+  ]},
+  { id:4, title:"Sapiens", author:"Yuval Noah Harari", genre:"Lịch sử", cover:"🌍", year:2011, rating:4.9, desc:"Câu chuyện về sự tiến hóa của loài người từ thời tiền sử đến hiện đại.", hasOnline: false, chapters:[] },
+  { id:5, title:"Atomic Habits", author:"James Clear", genre:"Kỹ năng sống", cover:"⚡", year:2018, rating:4.8, desc:"Phương pháp xây dựng thói quen nhỏ để tạo ra thay đổi lớn trong cuộc sống.", hasOnline: true, chapters:[
+    { title:"Chương 1: Sức mạnh bất ngờ của những cải tiến nhỏ", content:`<p class="chapter-heading">Tại sao những thói quen nhỏ lại tạo ra sự khác biệt lớn?</p><p>Rất dễ để đánh giá thấp giá trị của việc cải thiện từng chút một. Thường thì chúng ta tự thuyết phục mình rằng sự thay đổi lớn đòi hỏi hành động lớn. Dù là giảm cân, xây dựng doanh nghiệp, viết sách, vô địch giải đấu hay đạt được bất kỳ mục tiêu nào khác, chúng ta gây áp lực để thực hiện những bước đột phá lớn lao đáng kể mà chúng ta nghĩ sẽ khiến bước tiến trở nên ấn tượng.</p><p>Trong khi đó, cải thiện 1% thì chẳng đáng chú ý — đôi khi không thể nhận thấy ngay lập tức. Nhưng nó có thể có ý nghĩa rất lớn, đặc biệt về lâu dài. Sự khác biệt giữa một quyết định tốt hơn 1% và tệ hơn 1% có vẻ không đáng kể trong một khoảnh khắc nhất định, nhưng theo thời gian những khoảnh khắc này sẽ tích lũy lại và tạo ra một sự chênh lệch khổng lồ.</p><p>Nếu bạn có thể tốt hơn 1% mỗi ngày trong một năm, bạn sẽ kết thúc với kết quả tốt hơn 37 lần so với ban đầu. Ngược lại, nếu bạn tệ hơn 1% mỗi ngày trong một năm, bạn sẽ giảm xuống gần bằng không. Những gì bắt đầu như những chiến thắng nhỏ hoặc thất bại nhỏ tích lũy thành những kết quả rất khác nhau.</p>` }
+  ]},
+  { id:6, title:"Bố Già", author:"Mario Puzo", genre:"Tiểu thuyết", cover:"🌹", year:1969, rating:4.7, desc:"Cuộc sống đầy quyền lực và bi kịch của gia tộc mafia Corleone.", hasOnline: false, chapters:[] },
+  { id:7, title:"Deep Work", author:"Cal Newport", genre:"Kỹ năng sống", cover:"🔥", year:2016, rating:4.7, desc:"Nghệ thuật làm việc tập trung sâu trong thế giới đầy xao lãng số.", hasOnline: true, chapters:[
+    { title:"Chương 1: Deep Work là có giá trị", content:`<p class="chapter-heading">Làm việc sâu trong kỷ nguyên số</p><p>Vào tháng 9 năm 2012, nhà khoa học máy tính người Đức tên Carl Jung đến một ngôi làng nhỏ ở vùng nông thôn Bollingen thuộc Thụy Sĩ. Tại đây, từ mảnh đất ven hồ mà ông mua, ông bắt đầu xây dựng bằng tay một tổ hợp tháp bằng đá.</p><p>Jung sẽ trở lại công trình của mình nhiều lần trong vài thập kỷ tới — bổ sung phòng, theo cách nhìn của ông, khi cấu trúc nội tâm của ông đòi hỏi điều đó. Ông gọi nơi này là <em>Bollingen Tower</em> (Tháp Bollingen) và nó trở thành nơi ông tìm kiếm sự cô đơn cần thiết để suy nghĩ sâu sắc.</p><p>Đây không phải là điều bình thường đối với một nhân vật xuất chúng như Jung. Ở Zurich, Jung là bác sĩ tâm thần với phòng khám của riêng mình. Ông xuất bản thường xuyên, thỉnh thoảng cộng tác với Sigmund Freud và đang nổi lên như một nhân vật quan trọng trong tâm lý học đầu thế kỷ 20.</p>` }
+  ]},
+  { id:8, title:"Người Đua Diều", author:"Khaled Hosseini", genre:"Tiểu thuyết", cover:"🪁", year:2003, rating:4.8, desc:"Câu chuyện về tình bạn, lòng trung thành và sự cứu chuộc tại Afghanistan.", hasOnline: false, chapters:[] },
+  { id:9, title:"Cô Gái Đến Từ Hôm Qua", author:"Nguyễn Nhật Ánh", genre:"Văn học VN", cover:"🌸", year:1992, rating:4.8, desc:"Câu chuyện tình trong sáng của tuổi học trò đầy hoài niệm.", hasOnline: false, chapters:[] },
+  { id:10, title:"Cho Tôi Xin Một Vé Đi Tuổi Thơ", author:"Nguyễn Nhật Ánh", genre:"Văn học VN", cover:"🎈", year:2008, rating:4.9, desc:"Hành trình kỳ diệu trở về thế giới tuổi thơ ngây thơ.", hasOnline: false, chapters:[] },
+  { id:11, title:"The Lean Startup", author:"Eric Ries", genre:"Kinh doanh", cover:"🚀", year:2011, rating:4.5, desc:"Phương pháp khởi nghiệp tinh gọn — xây dựng sản phẩm đúng cách.", hasOnline: false, chapters:[] },
+  { id:12, title:"Zero to One", author:"Peter Thiel", genre:"Kinh doanh", cover:"💡", year:2014, rating:4.6, desc:"Bí quyết xây dựng startup từ con số không đến thành công vượt bậc.", hasOnline: false, chapters:[] },
+];
+
+const USERS_DATA = [
+  { id:"u_admin", username:"admin", password:"admin123", role:"admin", name:"Admin SBU3", email:"admin@kaopiz.com", joinDate:"2024-01-01" },
+  { id:"u_1", username:"user1", password:"123456", role:"user", name:"Nguyễn Văn An", email:"an.nguyen@kaopiz.com", joinDate:"2024-03-15" },
+  { id:"u_2", username:"user2", password:"123456", role:"user", name:"Trần Thị Bình", email:"binh.tran@kaopiz.com", joinDate:"2024-04-01" },
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE (localStorage)
+// ═══════════════════════════════════════════════════════
+function ls(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+}
+function lsSet(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+let books = ls('sbu3_books', BOOKS_DATA);
+let users = ls('sbu3_users', USERS_DATA);
+let borrows = ls('sbu3_borrows', [
+  { id:"b1", bookId:2, userId:"u_1", borrowDate:"2025-05-01", dueDate:"2025-05-10", returnDate:null, status:"overdue" },
+  { id:"b2", bookId:5, userId:"u_2", borrowDate:"2025-05-10", dueDate:"2025-06-01", returnDate:null, status:"active" },
+]);
+let requests = ls('sbu3_requests', []);
+let session = ls('sbu3_session', null);
+let readProgress = ls('sbu3_read_progress', {});
+
+function save() {
+  lsSet('sbu3_books', books);
+  lsSet('sbu3_users', users);
+  lsSet('sbu3_borrows', borrows);
+  lsSet('sbu3_requests', requests);
+  lsSet('sbu3_session', session);
+  lsSet('sbu3_read_progress', readProgress);
+}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════
+const today = () => new Date().toISOString().split('T')[0];
+const addDays = (d, n) => { const dt = new Date(d); dt.setDate(dt.getDate()+n); return dt.toISOString().split('T')[0]; };
+const isOverdue = (due) => due && new Date(due) < new Date(today());
+const daysLeft = (due) => Math.ceil((new Date(due) - new Date()) / 86400000);
+const currentUser = () => users.find(u => u.id === session?.userId);
+const isAdmin = () => currentUser()?.role === 'admin';
+const isBookBorrowed = (id) => borrows.find(b => b.bookId === id && !b.returnDate);
+const genId = () => `id_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+const initials = (name) => name ? name.split(' ').pop()[0].toUpperCase() : '?';
+
+// ═══════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════
+function showToast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = `toast-item ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════
+function openModal(title, html) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-backdrop').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('modal-backdrop').classList.add('hidden'); }
+function closeModalIfBackdrop(e) { if (e.target === document.getElementById('modal-backdrop')) closeModal(); }
+
+// ═══════════════════════════════════════════════════════
+// PAGES
+// ═══════════════════════════════════════════════════════
+let currentPage = 'home';
+function showPage(page) {
+  ['home','catalog','dashboard'].forEach(p => {
+    document.getElementById(`page-${p}`).classList.toggle('hidden', p !== page);
+    const btn = document.getElementById(`nav-${p}`);
+    if (btn) btn.classList.toggle('active', p === page);
+  });
+  currentPage = page;
+  if (page === 'home') { renderHomeBooks(); renderHeroStats(); }
+  if (page === 'catalog') renderCatalog();
+  if (page === 'dashboard') {
+    if (!currentUser()) { showAuthPage(); return; }
+    renderDashboard();
+  }
+  window.scrollTo(0, 0);
+}
+
+function requireLoginThen(fn) {
+  if (currentUser()) fn();
+  else { showAuthPage(); pendingAction = fn; }
+}
+let pendingAction = null;
+
+// ═══════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════
+function showAuthPage() {
+  document.getElementById('main-site').classList.add('hidden');
+  document.getElementById('auth-page').classList.remove('hidden');
+}
+function showMainSite() {
+  document.getElementById('auth-page').classList.add('hidden');
+  document.getElementById('main-site').classList.remove('hidden');
+}
+function switchAuthTab(tab) {
+  document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('register-form').classList.toggle('hidden', tab !== 'register');
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+}
+function doLogin() {
+  const username = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value;
+  const u = users.find(x => x.username === username && x.password === password);
+  if (!u) { showToast('Sai tên đăng nhập hoặc mật khẩu', 'error'); return; }
+  session = { userId: u.id };
+  save();
+  showMainSite();
+  renderNavRight();
+  showToast(`Chào mừng ${u.name}! 👋`);
+  if (pendingAction) { pendingAction(); pendingAction = null; }
+  else showPage('dashboard');
+}
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const username = document.getElementById('reg-user').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const confirm = document.getElementById('reg-confirm').value;
+  if (!name || !username || !pass || !email) { showToast('Vui lòng điền đầy đủ thông tin', 'error'); return; }
+  if (pass !== confirm) { showToast('Mật khẩu xác nhận không khớp', 'error'); return; }
+  if (users.find(u => u.username === username)) { showToast('Tên đăng nhập đã tồn tại', 'error'); return; }
+  const newUser = { id: genId(), username, password: pass, role: 'user', name, email, joinDate: today() };
+  users.push(newUser);
+  session = { userId: newUser.id };
+  save();
+  showMainSite();
+  renderNavRight();
+  showToast(`Đăng ký thành công! Chào ${name} 🎉`);
+  showPage('dashboard');
+}
+function doLogout() {
+  session = null; save();
+  renderNavRight();
+  showPage('home');
+  showToast('Đã đăng xuất');
+}
+
+// ═══════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════
+function renderNavRight() {
+  const el = document.getElementById('nav-right');
+  const u = currentUser();
+  if (!u) {
+    el.innerHTML = `<button class="btn btn-outline btn-sm" onclick="showAuthPage()">Đăng nhập</button><button class="btn btn-primary btn-sm" onclick="showAuthPage()">Đăng ký</button>`;
+  } else {
+    el.innerHTML = `
+      ${isAdmin() ? `<span class="badge badge-red">ADMIN</span>` : ''}
+      <div class="nav-user"><div class="nav-avatar">${initials(u.name)}</div>${u.name.split(' ').pop()}</div>
+      <button class="btn btn-subtle btn-sm" onclick="doLogout()">Đăng xuất</button>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════════════════
+function renderHeroStats() {
+  const activeBorrows = borrows.filter(b=>!b.returnDate).length;
+  const members = users.filter(u=>u.role==='user').length;
+  document.getElementById('hero-stats').innerHTML = [
+    [books.length, 'Đầu sách'],
+    [books.filter(b=>b.hasOnline).length, 'Đọc online'],
+    [members, 'Thành viên'],
+    [activeBorrows, 'Đang mượn'],
+  ].map(([n,l])=>`<div><div class="hero-stat-num">${n}</div><div class="hero-stat-label">${l}</div></div>`).join('');
+}
+function renderHomeBooks() {
+  const top = [...books].sort((a,b)=>b.rating-a.rating).slice(0,6);
+  document.getElementById('home-books').innerHTML = top.map(b=>bookCardHTML(b)).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// CATALOG
+// ═══════════════════════════════════════════════════════
+let activeGenre = 'Tất cả';
+function renderGenrePills() {
+  const genres = ['Tất cả', ...new Set(books.map(b=>b.genre))];
+  document.getElementById('genre-pills').innerHTML = genres.map(g =>
+    `<button class="genre-pill ${g===activeGenre?'active':''}" onclick="setGenre('${g}')">${g}</button>`
+  ).join('');
+}
+function setGenre(g) { activeGenre=g; renderGenrePills(); renderCatalog(); }
+function renderCatalog() {
+  renderGenrePills();
+  const q = (document.getElementById('catalog-search')?.value||'').toLowerCase();
+  const sort = document.getElementById('sort-select')?.value||'title';
+  const availOnly = document.getElementById('avail-filter')?.checked;
+  let list = books.filter(b => {
+    const mq = b.title.toLowerCase().includes(q)||b.author.toLowerCase().includes(q);
+    const mg = activeGenre==='Tất cả'||b.genre===activeGenre;
+    const ma = !availOnly||!isBookBorrowed(b.id);
+    return mq&&mg&&ma;
+  });
+  if (sort==='rating') list.sort((a,b)=>b.rating-a.rating);
+  else if (sort==='year') list.sort((a,b)=>b.year-a.year);
+  else list.sort((a,b)=>a.title.localeCompare(b.title,'vi'));
+  const grid = document.getElementById('catalog-grid');
+  if (!grid) return;
+  grid.innerHTML = list.length ? list.map(b=>bookCardHTML(b)).join('') : `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-msg">Không tìm thấy sách phù hợp</div></div>`;
+}
+
+function bookCardHTML(book) {
+  const borrowed = isBookBorrowed(book.id);
+  return `<div class="book-card" onclick="openBookDetail(${book.id})">
+    <div class="book-cover ${borrowed?'book-cover-borrowed':book.hasOnline?'book-cover-online':'book-cover-available'}">
+      <span>${book.cover}</span>
+      ${borrowed?`<span class="book-status-tag" style="background:var(--red);color:#fff">ĐANG MƯỢN</span>`:''}
+      ${book.hasOnline&&!borrowed?`<span class="book-status-tag" style="background:var(--primary);color:#fff">ONLINE</span>`:''}
+    </div>
+    <div class="book-info">
+      <div class="book-title">${book.title}</div>
+      <div class="book-author">${book.author} · ${book.year}</div>
+      <div class="book-meta">
+        <span class="badge badge-blue">${book.genre}</span>
+        <span class="book-rating">★ ${book.rating}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// BOOK DETAIL MODAL
+// ═══════════════════════════════════════════════════════
+function openBookDetail(bookId) {
+  const book = books.find(b=>b.id===bookId);
+  if (!book) return;
+  const u = currentUser();
+  const activeBorrow = isBookBorrowed(bookId);
+  const myBorrows = u ? borrows.filter(b=>b.userId===u.id&&!b.returnDate).length : 0;
+  const myReservation = u ? requests.find(r=>r.bookId===bookId&&r.userId===u.id&&r.status==='waiting') : null;
+  const coverBg = activeBorrow ? '#FFF5F5' : book.hasOnline ? 'linear-gradient(135deg,#EFF6FF,#E0F2FE)' : 'var(--primary-light)';
+
+  let actions = '';
+  if (!u) {
+    actions = `<button class="btn btn-primary" onclick="closeModal();showAuthPage()">Đăng nhập để mượn / đọc</button>`;
+  } else {
+    if (book.hasOnline) actions += `<button class="btn btn-outline" onclick="closeModal();openReader(${bookId})">📖 Đọc online</button>`;
+    if (activeBorrow) {
+      if (myReservation) actions += `<button class="btn btn-subtle" disabled>✓ Đã đặt trước</button>`;
+      else actions += `<button class="btn btn-primary" onclick="closeModal();doReserve(${bookId})">📬 Đặt trước</button>`;
+    } else {
+      actions += `<button class="btn btn-primary" onclick="closeModal();doBorrow(${bookId})" ${myBorrows>=3?'disabled':''}>📥 Mượn sách</button>`;
+    }
+  }
+
+  openModal(book.title, `
+    <div style="text-align:center;font-size:72px;padding:24px;border-radius:12px;margin-bottom:18px;background:${coverBg}">${book.cover}</div>
+    <div style="margin-bottom:6px"><span class="badge badge-blue">${book.genre}</span> ${book.hasOnline?'<span class="badge badge-blue" style="margin-left:6px">📖 Có bản online</span>':''}</div>
+    <div style="font-size:14px;color:var(--gray-400);margin-bottom:16px">${book.author} · ${book.year} · ★ ${book.rating}</div>
+    <div class="book-detail-stats">
+      <div class="book-detail-stat"><div class="book-detail-stat-val">★ ${book.rating}</div><div class="book-detail-stat-label">Đánh giá</div></div>
+      <div class="book-detail-stat"><div class="book-detail-stat-val">${book.year}</div><div class="book-detail-stat-label">Năm XB</div></div>
+      <div class="book-detail-stat"><div class="book-detail-stat-val" style="color:${activeBorrow?'var(--red)':'var(--green)'}">${activeBorrow?'Đang mượn':'Có sẵn'}</div><div class="book-detail-stat-label">Trạng thái</div></div>
+    </div>
+    <p class="book-detail-desc">${book.desc}</p>
+    <div class="book-detail-actions">${actions}</div>
+    ${myBorrows>=3&&!activeBorrow&&u?'<p style="font-size:12px;color:var(--red);margin-top:8px">⚠️ Bạn đang mượn tối đa 3 cuốn</p>':''}
+  `);
+}
+
+// ═══════════════════════════════════════════════════════
+// BORROW / RETURN / RESERVE
+// ═══════════════════════════════════════════════════════
+function doBorrow(bookId) {
+  const u = currentUser(); if (!u) return;
+  if (isBookBorrowed(bookId)) { showToast('Sách này đang được mượn', 'error'); return; }
+  const myB = borrows.filter(b=>b.userId===u.id&&!b.returnDate);
+  if (myB.length>=3) { showToast('Bạn đang mượn tối đa 3 cuốn', 'error'); return; }
+  const due = addDays(today(), 14);
+  borrows.push({ id:genId(), bookId, userId:u.id, borrowDate:today(), dueDate:due, returnDate:null, status:'active' });
+  save();
+  const book = books.find(b=>b.id===bookId);
+  showToast(`Đã mượn "${book?.title}" — hạn trả: ${due} 📚`);
+  if (currentPage==='dashboard') renderDashboard();
+  if (currentPage==='catalog') renderCatalog();
+  if (currentPage==='home') renderHomeBooks();
+}
+function doReturn(borrowId) {
+  const borrow = borrows.find(b=>b.id===borrowId);
+  if (!borrow) return;
+  const book = books.find(b=>b.id===borrow.bookId);
+  borrow.returnDate = today(); borrow.status = 'returned';
+  // notify reservation
+  const waiting = requests.find(r=>r.bookId===borrow.bookId&&r.status==='waiting');
+  if (waiting) { waiting.status='ready'; showToast('📬 Có người đặt trước — đã thông báo!', 'info'); }
+  save();
+  showToast(`Đã trả "${book?.title}" ✅`);
+  if (currentPage==='dashboard') renderDashboard();
+  if (currentPage==='catalog') renderCatalog();
+}
+function doReserve(bookId) {
+  const u = currentUser(); if (!u) return;
+  if (requests.find(r=>r.bookId===bookId&&r.userId===u.id&&r.status==='waiting')) { showToast('Bạn đã đặt trước rồi', 'error'); return; }
+  const book = books.find(b=>b.id===bookId);
+  requests.push({ id:genId(), bookId, userId:u.id, userName:u.name, bookTitle:book?.title, date:today(), status:'waiting' });
+  save();
+  showToast(`Đã đặt trước "${book?.title}" 📬`);
+  if (currentPage==='dashboard') renderDashboard();
+}
+
+// ═══════════════════════════════════════════════════════
+// READER
+// ═══════════════════════════════════════════════════════
+let readerBook = null, readerFontSize = 18, readerDark = false, readerChapter = 0;
+function openReader(bookId) {
+  const book = books.find(b=>b.id===bookId);
+  if (!book||!book.hasOnline||!book.chapters.length) { showToast('Sách này chưa có bản đọc online', 'error'); return; }
+  readerBook = book; readerChapter = readProgress[bookId]?.chapter||0; readerFontSize = 18; readerDark = false;
+  renderReader();
+  document.getElementById('reader-view').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeReader() {
+  document.getElementById('reader-view').classList.add('hidden');
+  document.body.style.overflow = '';
+  readerBook = null;
+}
+function renderReader() {
+  if (!readerBook) return;
+  const ch = readerBook.chapters[readerChapter];
+  document.getElementById('reader-nav-title').textContent = readerBook.title;
+  document.getElementById('reader-content').innerHTML = `
+    <div class="reader-book-title">${readerBook.title}</div>
+    <div class="reader-chapter">${ch.title}</div>
+    <div class="reader-text" style="font-size:${readerFontSize}px">${ch.content}</div>
+    <div style="display:flex;justify-content:space-between;margin-top:48px;padding-top:24px;border-top:1px solid var(--gray-200)">
+      ${readerChapter>0?`<button class="btn btn-outline btn-sm" onclick="gotoChapter(${readerChapter-1})">← Chương trước</button>`:'<span></span>'}
+      ${readerChapter<readerBook.chapters.length-1?`<button class="btn btn-primary btn-sm" onclick="gotoChapter(${readerChapter+1})">Chương sau →</button>`:'<span style="font-size:13px;color:var(--gray-400)">Hết nội dung mẫu</span>'}
+    </div>`;
+  document.getElementById('reader-page-left').textContent = `Chương ${readerChapter+1}/${readerBook.chapters.length}`;
+  document.getElementById('reader-page-right').textContent = ch.title;
+  document.getElementById('reader-body').scrollTop = 0;
+  updateReadProgress();
+  if (session) { readProgress[readerBook.id]={chapter:readerChapter}; save(); }
+}
+function gotoChapter(n) { readerChapter=n; renderReader(); }
+function changeFontSize(d) { readerFontSize=Math.max(14,Math.min(24,readerFontSize+d)); renderReader(); }
+function toggleDarkMode() {
+  readerDark=!readerDark;
+  const rv = document.getElementById('reader-view');
+  rv.classList.toggle('reader-dark', readerDark);
+  document.getElementById('dark-btn').textContent = readerDark?'☀️':'🌙';
+}
+function updateReadProgress() {
+  const body = document.getElementById('reader-body');
+  if (!body) return;
+  const pct = body.scrollHeight>body.clientHeight ? Math.round(body.scrollTop/(body.scrollHeight-body.clientHeight)*100) : 100;
+  const fill = document.getElementById('reader-progress-fill');
+  if (fill) fill.style.width = pct+'%';
+}
+
+// ═══════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════
+let dashTab = 'overview';
+function renderDashboard() {
+  const u = currentUser();
+  if (!u) return;
+  const el = document.getElementById('dashboard-content');
+  const tabs = u.role==='admin'
+    ? [['overview','📊 Tổng quan'],['books','📗 Sách'],['members','👥 Thành viên'],['borrows','📤 Đang mượn'],['requests','📬 Yêu cầu']]
+    : [['overview','📚 Sách của tôi'],['history','🕐 Lịch sử'],['reserve','📬 Đặt trước']];
+
+  if (!tabs.find(t=>t[0]===dashTab)) dashTab=tabs[0][0];
+
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:12px">
+      <div>
+        <h2 style="font-size:24px;font-weight:800;color:var(--gray-900);margin-bottom:2px">Dashboard</h2>
+        <p style="font-size:14px;color:var(--gray-400)">${u.role==='admin'?'Quản lý thư viện SBU3':'Tủ sách cá nhân của bạn'}</p>
+      </div>
+      ${u.role==='user'?`<button class="btn btn-primary btn-sm" onclick="showPage('catalog')">+ Mượn thêm sách</button>`:''}
+    </div>
+    <div class="tabs" style="margin-top:16px">${tabs.map(([v,l])=>`<button class="tab-btn ${v===dashTab?'active':''}" onclick="switchDashTab('${v}')">${l}</button>`).join('')}</div>
+    <div id="dash-tab-content" class="fade-up"></div>`;
+
+  renderDashTab();
+}
+
+function switchDashTab(tab) { dashTab=tab; renderDashboard(); }
+
+function renderDashTab() {
+  const el = document.getElementById('dash-tab-content');
+  const u = currentUser();
+  if (!el||!u) return;
+
+  if (u.role==='user') {
+    const myActive = borrows.filter(b=>b.userId===u.id&&!b.returnDate);
+    const myHistory = borrows.filter(b=>b.userId===u.id&&b.returnDate);
+    const myRequests = requests.filter(r=>r.userId===u.id);
+    const overdueList = myActive.filter(b=>isOverdue(b.dueDate));
+
+    if (dashTab==='overview') {
+      el.innerHTML = `
+        ${overdueList.length?`<div class="overdue-alert">⚠️ Bạn có <strong style="margin:0 4px">${overdueList.length}</strong> cuốn sách quá hạn. Vui lòng trả sớm!</div>`:''}
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-num">${myActive.length}</div><div class="stat-label">📤 Đang mượn</div></div>
+          <div class="stat-card ${overdueList.length?'red':'green'}"><div class="stat-num">${overdueList.length}</div><div class="stat-label">⚠️ Quá hạn</div></div>
+          <div class="stat-card"><div class="stat-num">${myHistory.length}</div><div class="stat-label">✅ Đã trả</div></div>
+          <div class="stat-card"><div class="stat-num">${myRequests.filter(r=>r.status==='waiting').length}</div><div class="stat-label">📬 Đang đặt trước</div></div>
+        </div>
+        ${myActive.length===0?`<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-msg">Bạn chưa mượn sách nào</div><div class="empty-sub">Ghé tủ sách để chọn sách phù hợp nhé!</div><br><button class="btn btn-primary" onclick="showPage('catalog')">Khám phá tủ sách</button></div>`
+        : `<div class="card" style="overflow:hidden"><table class="data-table">${borrowTableRows(myActive, u)}</table></div>`}`;
+    }
+    if (dashTab==='history') {
+      el.innerHTML = myHistory.length===0?emptyHTML('🕐','Chưa có lịch sử mượn sách'):`<div class="card" style="overflow:hidden"><table class="data-table"><thead><tr><th>Sách</th><th>Ngày mượn</th><th>Ngày trả</th><th>Trạng thái</th></tr></thead><tbody>${myHistory.map(b=>{const bk=books.find(x=>x.id===b.bookId);return '<tr><td style="font-weight:600">'+(bk?.cover||'')+' '+(bk?.title||'—')+'</td><td>'+b.borrowDate+'</td><td>'+b.returnDate+'</td><td><span class="badge badge-green">Đã trả</span></td></tr>';}).join('')}</tbody></table></div>`;
+    }
+    if (dashTab==='reserve') {
+      el.innerHTML = myRequests.length===0?emptyHTML('📬','Chưa có đặt trước',`Khi sách đang được mượn, bấm "Đặt trước" để nhận thông báo khi có.`):`<div class="card" style="overflow:hidden"><table class="data-table"><thead><tr><th>Sách</th><th>Ngày đặt</th><th>Trạng thái</th></tr></thead><tbody>${myRequests.map(r=>`<tr><td style="font-weight:600">${r.bookTitle}</td><td>${r.date}</td><td>${r.status==='waiting'?'<span class="badge badge-amber">⏳ Đang chờ</span>':r.status==='ready'?'<span class="badge badge-green">✅ Sẵn sàng</span>':'<span class="badge badge-gray">Hoàn thành</span>'}</td></tr>`).join('')}</tbody></table></div>`;
+    }
+  }
+
+  if (u.role==='admin') {
+    const activeB = borrows.filter(b=>!b.returnDate);
+    const overdueB = activeB.filter(b=>isOverdue(b.dueDate));
+    const members = users.filter(u=>u.role==='user');
+    const pendingReq = requests.filter(r=>r.status==='waiting');
+
+    if (dashTab==='overview') {
+      el.innerHTML = `
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-num">${books.length}</div><div class="stat-label">📚 Tổng sách</div></div>
+          <div class="stat-card green"><div class="stat-num">${books.length-activeB.length}</div><div class="stat-label">✅ Sẵn có</div></div>
+          <div class="stat-card amber"><div class="stat-num">${activeB.length}</div><div class="stat-label">📤 Đang mượn</div></div>
+          <div class="stat-card ${overdueB.length?'red':''}"><div class="stat-num">${overdueB.length}</div><div class="stat-label">⚠️ Quá hạn</div></div>
+          <div class="stat-card"><div class="stat-num">${members.length}</div><div class="stat-label">👥 Thành viên</div></div>
+          <div class="stat-card amber"><div class="stat-num">${pendingReq.length}</div><div class="stat-label">📬 Chờ duyệt</div></div>
+        </div>
+        ${overdueB.length?`<div class="card" style="padding:20px 24px;border-left:4px solid var(--red);margin-top:8px">
+          <div style="font-size:15px;font-weight:700;color:var(--red);margin-bottom:12px">⚠️ Sách quá hạn (${overdueB.length})</div>
+          ${overdueB.map(b=>{const bk=books.find(x=>x.id===b.bookId);const usr=users.find(u=>u.id===b.userId);return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray-200);font-size:14px"><span style="font-weight:600">${bk?.title}</span><span style="color:var(--gray-500)">${usr?.name}</span><span style="color:var(--red);font-weight:600">Quá ${Math.abs(daysLeft(b.dueDate))} ngày</span></div>`;}).join('')}
+        </div>`:''}`;
+    }
+
+    if (dashTab==='books') {
+      el.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn btn-primary btn-sm" onclick="openBookForm(null)">+ Thêm sách</button></div>
+        <div class="card" style="overflow:hidden"><table class="data-table">
+          <thead><tr><th>Sách</th><th>Tác giả</th><th>Thể loại</th><th>Năm</th><th>Rating</th><th>Online</th><th></th></tr></thead>
+          <tbody>${books.map(b=>`<tr><td><span style="font-size:18px;margin-right:6px">${b.cover}</span><span style="font-weight:600">${b.title}</span></td><td style="color:var(--gray-500)">${b.author}</td><td><span class="badge badge-blue">${b.genre}</span></td><td style="color:var(--gray-500)">${b.year}</td><td style="color:var(--amber);font-weight:600">★ ${b.rating}</td><td>${b.hasOnline?'<span class="badge badge-green">✓</span>':'<span class="badge badge-gray">—</span>'}</td><td style="display:flex;gap:6px;flex-wrap:nowrap"><button class="btn btn-subtle btn-sm" onclick="openBookForm(${b.id})">Sửa</button><button class="btn btn-danger btn-sm" onclick="doDeleteBook(${b.id})">Xóa</button></td></tr>`).join('')}</tbody>
+        </table></div>`;
+    }
+
+    if (dashTab==='members') {
+      el.innerHTML = `<div class="card" style="overflow:hidden"><table class="data-table">
+        <thead><tr><th>Thành viên</th><th>Username</th><th>Email</th><th>Ngày tham gia</th><th>Đang mượn</th><th></th></tr></thead>
+        <tbody>${members.map(m=>{const cnt=borrows.filter(b=>b.userId===m.id&&!b.returnDate).length;return `<tr><td><div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:50%;background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">${initials(m.name)}</div><span style="font-weight:600">${m.name}</span></div></td><td style="color:var(--gray-500)">${m.username}</td><td style="color:var(--gray-500)">${m.email}</td><td style="color:var(--gray-500)">${m.joinDate}</td><td>${cnt>0?`<span class="badge badge-amber">${cnt} cuốn</span>`:'<span style="color:var(--gray-400)">—</span>'}</td><td><button class="btn btn-danger btn-sm" onclick="doDeleteUser('${m.id}')">Xóa</button></td></tr>`;}).join('')}</tbody>
+      </table></div>`;
+    }
+
+    if (dashTab==='borrows') {
+      if(activeB.length===0){el.innerHTML=emptyHTML('📤','Không có sách nào đang được mượn');}
+      else{const rows=activeB.map(b=>{const bk=books.find(x=>x.id===b.bookId);const usr=users.find(u=>u.id===b.userId);const od=isOverdue(b.dueDate);const dl=daysLeft(b.dueDate);return '<tr><td style="font-weight:600">'+bk?.cover+' '+bk?.title+'</td><td style="color:var(--gray-500)">'+usr?.name+'</td><td style="color:var(--gray-500)">'+b.borrowDate+'</td><td style="color:'+(od?'var(--red)':'var(--gray-500)')+'">'+b.dueDate+'</td><td>'+(od?'<span class="badge badge-red">Quá '+Math.abs(dl)+'d</span>':dl<=3?'<span class="badge badge-amber">Sắp hạn</span>':'<span class="badge badge-green">Đúng hạn</span>')+'</td><td><button class="btn btn-outline btn-sm" onclick="doReturn(\''+b.id+'\')" >Trả</button></td></tr>';}).join('');
+      el.innerHTML='<div class="card" style="overflow:hidden"><table class="data-table"><thead><tr><th>Sách</th><th>Người mượn</th><th>Ngày mượn</th><th>Hạn trả</th><th>TT</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';}
+    }
+
+    if (dashTab==='requests') {
+      el.innerHTML = requests.length===0?emptyHTML('📬','Chưa có yêu cầu đặt trước'):`<div class="card" style="overflow:hidden"><table class="data-table">
+        <thead><tr><th>Sách</th><th>Người đặt</th><th>Ngày đặt</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>${requests.map(r=>`<tr><td style="font-weight:600">${r.bookTitle}</td><td style="color:var(--gray-500)">${r.userName}</td><td style="color:var(--gray-500)">${r.date}</td><td>${r.status==='waiting'?'<span class="badge badge-amber">⏳ Đang chờ</span>':r.status==='ready'?'<span class="badge badge-green">✅ Sẵn sàng</span>':'<span class="badge badge-gray">Hoàn thành</span>'}</td><td>${r.status==='waiting'?`<button class="btn btn-primary btn-sm" onclick="doApproveRequest('${r.id}')">Duyệt</button>`:''}</td></tr>`).join('')}</tbody>
+      </table></div>`;
+    }
+  }
+}
+
+function borrowTableRows(list, u) {
+  const header = '<thead><tr><th>Sách</th><th>Ngày mượn</th><th>Hạn trả</th><th>Tình trạng</th><th></th></tr></thead>';
+  const rows = list.map(b => {
+    const bk = books.find(x => x.id === b.bookId);
+    const od = isOverdue(b.dueDate);
+    const dl = daysLeft(b.dueDate);
+    const borderColor = od ? 'var(--red)' : dl<=3 ? 'var(--amber)' : 'var(--green)';
+    const statusBadge = od
+      ? '<span class="badge badge-red">Quá '+Math.abs(dl)+' ngày</span>'
+      : dl<=3 ? '<span class="badge badge-amber">Còn '+dl+' ngày</span>'
+      : '<span class="badge badge-green">Còn '+dl+' ngày</span>';
+    const tdColor = od ? 'var(--red)' : 'var(--gray-600)';
+    const readBtn = bk?.hasOnline ? '<button class="btn btn-outline btn-sm" onclick="closeModal();openReader('+bk.id+')">Đọc online</button>' : '';
+    return '<tr style="border-left:3px solid '+borderColor+'">'
+      +'<td style="font-weight:600">'+(bk?.cover||'')+' '+(bk?.title||'')+'</td>'
+      +'<td style="color:var(--gray-500)">'+b.borrowDate+'</td>'
+      +'<td style="color:'+tdColor+'">'+b.dueDate+'</td>'
+      +'<td>'+statusBadge+'</td>'
+      +'<td><div style="display:flex;gap:6px">'+readBtn+'<button class="btn btn-subtle btn-sm" onclick="doReturn(\''+b.id+'\')">Trả sách</button></div></td>'
+      +'</tr>';
+  }).join('');
+  return header + '<tbody>' + rows + '</tbody>';
+}
+
+// ═══════════════════════════════════════════════════════
+// ADMIN ACTIONS
+// ═══════════════════════════════════════════════════════
+function openBookForm(bookId) {
+  const book = bookId ? books.find(b=>b.id===bookId) : null;
+  openModal(book?'Sửa thông tin sách':'Thêm sách mới', `
+    <div class="form-grid-2">
+      <div class="input-group" style="grid-column:1/-1"><label>Tên sách *</label><input class="input-field" id="bf-title" value="${book?.title||''}" placeholder="Tên sách" /></div>
+      <div class="input-group"><label>Tác giả *</label><input class="input-field" id="bf-author" value="${book?.author||''}" /></div>
+      <div class="input-group"><label>Thể loại</label><input class="input-field" id="bf-genre" value="${book?.genre||''}" /></div>
+      <div class="input-group"><label>Năm xuất bản</label><input class="input-field" type="number" id="bf-year" value="${book?.year||new Date().getFullYear()}" /></div>
+      <div class="input-group"><label>Đánh giá (1-5)</label><input class="input-field" type="number" step="0.1" min="1" max="5" id="bf-rating" value="${book?.rating||4.5}" /></div>
+      <div class="input-group"><label>Icon/Emoji</label><input class="input-field" id="bf-cover" value="${book?.cover||'📚'}" /></div>
+      <div class="input-group"><label>Có bản đọc online?</label><select class="input-field" id="bf-online"><option value="0" ${!book?.hasOnline?'selected':''}>Không</option><option value="1" ${book?.hasOnline?'selected':''}>Có</option></select></div>
+      <div class="input-group" style="grid-column:1/-1"><label>Mô tả</label><input class="input-field" id="bf-desc" value="${book?.desc||''}" /></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+      <button class="btn btn-subtle" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-primary" onclick="doSaveBook(${bookId||'null'})">${book?'Lưu thay đổi':'Thêm sách'}</button>
+    </div>`);
+}
+function doSaveBook(id) {
+  const title = document.getElementById('bf-title').value.trim();
+  if (!title) { showToast('Tên sách không được trống', 'error'); return; }
+  const data = {
+    title, author: document.getElementById('bf-author').value.trim(),
+    genre: document.getElementById('bf-genre').value.trim(),
+    year: parseInt(document.getElementById('bf-year').value)||2024,
+    rating: parseFloat(document.getElementById('bf-rating').value)||4.5,
+    cover: document.getElementById('bf-cover').value||'📚',
+    hasOnline: document.getElementById('bf-online').value==='1',
+    desc: document.getElementById('bf-desc').value.trim(),
+    chapters: [],
+  };
+  if (id) { const i=books.findIndex(b=>b.id===id); if(i>-1){books[i]={...books[i],...data};} showToast('Đã cập nhật sách ✅'); }
+  else { books.push({...data,id:Date.now()}); showToast('Đã thêm sách mới 📗'); }
+  save(); closeModal(); renderDashboard();
+}
+function doDeleteBook(id) {
+  if (!confirm('Xóa sách này?')) return;
+  books = books.filter(b=>b.id!==id); save();
+  showToast('Đã xóa sách'); renderDashboard();
+}
+function doDeleteUser(id) {
+  if (!confirm('Xóa thành viên này?')) return;
+  users = users.filter(u=>u.id!==id); save();
+  showToast('Đã xóa thành viên'); renderDashboard();
+}
+function doApproveRequest(id) {
+  const r=requests.find(x=>x.id===id); if(!r) return;
+  r.status='ready'; save();
+  showToast('Đã duyệt yêu cầu ✅'); renderDashboard();
+}
+
+// ═══════════════════════════════════════════════════════
+// HELPERS HTML
+// ═══════════════════════════════════════════════════════
+function emptyHTML(icon, msg, sub='') {
+  return `<div class="empty-state"><div class="empty-icon">${icon}</div><div class="empty-msg">${msg}</div>${sub?`<div class="empty-sub">${sub}</div>`:''}</div>`;
+}
+
+// Fix for admin borrows tab syntax issue
+(function patchAdminBorrows(){})();
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+function init() {
+  renderNavRight();
+  if (currentUser()) {
+    showMainSite();
+  } else {
+    showMainSite(); // show landing to non-logged users too
+  }
+  showPage('home');
+}
+init();
+</script>
+</body>
+</html>
