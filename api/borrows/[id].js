@@ -9,26 +9,24 @@ export default async function handler(req, res) {
   if (!payload) return json(res, { error: 'Unauthorized' }, 401)
 
   if (req.method === 'PUT') {
-    const borrows = readDB('borrows')
+    const borrows = await readDB('borrows')
     const idx = borrows.findIndex(b => b.id === req.query.id)
     if (idx === -1) return json(res, { error: 'Not found' }, 404)
 
-    const borrow = borrows[idx]
-    if (borrow.userId !== payload.userId && payload.role !== 'admin') {
+    if (borrows[idx].userId !== payload.userId && payload.role !== 'admin')
       return json(res, { error: 'Forbidden' }, 403)
-    }
 
     borrows[idx].returnDate = today()
     borrows[idx].status = 'returned'
-    writeDB('borrows', borrows)
+    await writeDB('borrows', borrows)
 
-    // Notify waiting requests
-    const requests = readDB('requests')
-    const waiting = requests.find(r => r.bookId === borrow.bookId && r.status === 'waiting')
+    // notify waiting requests
+    const requests = await readDB('requests')
+    const waiting = requests.find(r => r.bookId === borrows[idx].bookId && r.status === 'waiting')
     if (waiting) {
-      const idx2 = requests.findIndex(r => r.id === waiting.id)
-      requests[idx2].status = 'ready'
-      writeDB('requests', requests)
+      const i2 = requests.findIndex(r => r.id === waiting.id)
+      requests[i2].status = 'ready'
+      await writeDB('requests', requests)
     }
 
     return json(res, borrows[idx])

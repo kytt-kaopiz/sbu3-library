@@ -1,18 +1,18 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { Redis } from '@upstash/redis'
 
-const DATA_DIR = join(process.cwd(), 'data')
+export const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+})
 
-export function readDB(name) {
-  try {
-    return JSON.parse(readFileSync(join(DATA_DIR, `${name}.json`), 'utf8'))
-  } catch {
-    return []
-  }
+export async function readDB(name) {
+  const data = await redis.get(name)
+  if (!data) return []
+  return Array.isArray(data) ? data : []
 }
 
-export function writeDB(name, data) {
-  writeFileSync(join(DATA_DIR, `${name}.json`), JSON.stringify(data, null, 2))
+export async function writeDB(name, data) {
+  await redis.set(name, data)
 }
 
 export function genId() {

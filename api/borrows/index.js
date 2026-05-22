@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const payload = await getUser(req)
   if (!payload) return json(res, { error: 'Unauthorized' }, 401)
 
-  const borrows = readDB('borrows')
+  const borrows = await readDB('borrows')
 
   if (req.method === 'GET') {
     if (payload.role === 'admin') return json(res, borrows)
@@ -26,16 +26,9 @@ export default async function handler(req, res) {
     if (myActive.length >= 3) return json(res, { error: 'Bạn đang mượn tối đa 3 cuốn' }, 409)
 
     const due = addDays(today(), 14)
-    const borrow = {
-      id: genId(),
-      bookId: parseInt(bookId),
-      userId: payload.userId,
-      borrowDate: today(),
-      dueDate: due,
-      returnDate: null,
-    }
+    const borrow = { id: genId(), bookId: parseInt(bookId), userId: payload.userId, borrowDate: today(), dueDate: due, returnDate: null }
     borrows.push(borrow)
-    writeDB('borrows', borrows)
+    await writeDB('borrows', borrows)
     return json(res, borrow, 201)
   }
 }

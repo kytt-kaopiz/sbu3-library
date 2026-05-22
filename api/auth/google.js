@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   if (!code) return json(res, { error: 'No code provided' }, 400)
 
   try {
-    // Exchange code for tokens
     const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -22,16 +21,14 @@ export default async function handler(req, res) {
       }),
     })
     const tokens = await tokenRes.json()
-    if (!tokens.access_token) throw new Error('No access token')
+    if (!tokens.access_token) throw new Error('No access token: ' + JSON.stringify(tokens))
 
-    // Get user info from Google
     const profileRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     })
     const profile = await profileRes.json()
 
-    // Upsert user in DB
-    const users = readDB('users')
+    const users = await readDB('users')
     let user = users.find(u => u.googleId === profile.id)
     if (!user) {
       user = {
@@ -44,16 +41,13 @@ export default async function handler(req, res) {
         joinDate: today(),
       }
       users.push(user)
-      writeDB('users', users)
+      await writeDB('users', users)
     }
 
-    // Sign JWT
     const token = await signToken({ userId: user.id, role: user.role })
-
-    // Redirect to frontend with token
     res.redirect(`${process.env.APP_URL}/auth/callback?token=${token}`)
   } catch (err) {
-    console.error(err)
-    res.redirect(`${process.env.APP_URL}/auth/error`)
+    console.error('Google auth error:', err)
+    res.redirect(`${process.env.APP_URL}/auth/error?msg=${encodeURIComponent(err.message)}`)
   }
 }
