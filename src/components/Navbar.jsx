@@ -18,7 +18,6 @@ export default function Navbar() {
     access_type: 'offline',
   })
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e) => { if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false) }
     document.addEventListener('mousedown', handler)
@@ -35,10 +34,8 @@ export default function Navbar() {
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-lg shadow-sm group-hover:shadow-primary-500/30 transition-shadow">📖</div>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-lg shadow-sm">📖</div>
           <div>
             <div className="text-base font-extrabold text-gray-900 leading-none">
               <span className="text-primary-500">SBU</span><sup className="text-[10px]">3</sup> Library
@@ -47,33 +44,29 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Nav links */}
         <div className="hidden md:flex items-center gap-1">
           {navLink('/', '🏠 Trang chủ')}
-          {navLink('/catalog', '📚 Tủ sách')}
+          {navLink('/catalog', '💻 Online')}
+          {navLink('/physical', '📚 Vật lý SBU3')}
           {user && navLink('/dashboard', '📊 Dashboard')}
         </div>
 
-        {/* Right */}
         <div className="flex items-center gap-2.5">
           {user ? (
             <div className="relative" ref={dropRef}>
-              {/* User button */}
               <button onClick={() => setDropOpen(o => !o)}
                 className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-gray-100 transition-all">
-                <img src={user.avatar} alt={user.name}
-                  className="w-8 h-8 rounded-full border-2 border-primary-200 shadow-sm" />
+                <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full border-2 border-primary-200 shadow-sm" />
                 <div className="hidden sm:block text-left">
                   <div className="text-sm font-semibold text-gray-800 leading-none">{user.name.split(' ').slice(-2).join(' ')}</div>
                   <div className="text-[10px] text-gray-400 mt-0.5">{user.role === 'admin' ? '🔴 Admin' : '👤 Thành viên'}</div>
                 </div>
-                <svg className={clsx('w-4 h-4 text-gray-400 transition-transform', dropOpen && 'rotate-180')} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/></svg>
+                <svg className={clsx('w-4 h-4 text-gray-400 transition-transform', dropOpen && 'rotate-180')} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
+                </svg>
               </button>
-
-              {/* Dropdown */}
               {dropOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl border border-gray-200 shadow-xl animate-fade-up py-1.5 z-50">
-                  {/* User info */}
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex items-center gap-3">
                       <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border-2 border-primary-100" />
@@ -83,15 +76,18 @@ export default function Navbar() {
                       </div>
                     </div>
                   </div>
-                  {/* Links */}
                   <div className="py-1">
                     <button onClick={() => { navigate('/dashboard'); setDropOpen(false) }}
                       className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5">
                       <span>📊</span> Dashboard
                     </button>
+                    <button onClick={() => { navigate('/physical'); setDropOpen(false) }}
+                      className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5">
+                      <span>📚</span> Sách vật lý SBU3
+                    </button>
                     <button onClick={() => { navigate('/catalog'); setDropOpen(false) }}
                       className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2.5">
-                      <span>📚</span> Tủ sách
+                      <span>💻</span> Sách online
                     </button>
                   </div>
                   <div className="border-t border-gray-100 py-1">

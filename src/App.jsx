@@ -5,18 +5,17 @@ import Navbar from './components/Navbar'
 import Toast from './components/Toast'
 import Home from './pages/Home'
 import Catalog from './pages/Catalog'
+import Physical from './pages/Physical'
 import Reader from './pages/Reader'
 import Dashboard from './pages/Dashboard'
 import AuthCallback from './pages/AuthCallback'
 
 export default function App() {
   const { token, fetchMe, fetchBooks } = useStore()
-
   useEffect(() => {
     fetchBooks()
     if (token) fetchMe()
   }, [token])
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -24,6 +23,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/catalog" element={<Catalog />} />
+        <Route path="/physical" element={<Physical />} />
         <Route path="/reader/:id" element={<Reader />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
